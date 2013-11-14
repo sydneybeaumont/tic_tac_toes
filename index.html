@@ -1,0 +1,226 @@
+<html>
+<head>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
+	<script type="text/javascript" src="jquery.lightbox_me.js"></script>
+	<link href="table.css" rel="stylesheet" type="text/css" />
+	<script>
+		$(document).ready(function(){
+
+			var turn = "x";
+			//stating function to call later: function is to check for game winner
+			//winner IDed if all  in 
+			var winner = function(){
+			//all code that follows will be performed when "winner" function later or at any point called
+				//conditions for "winner" to return "true" and thus game to be over:
+					//at least 3 cells on board are filled = grab all tds (that've been assigned) with either class .x or .o and *count* them using javascript counting function .lenght and making it into a variable to call later in the function soon nested below
+					var xclasscount = $(".x").length;
+					var oclasscount = $(".o").length;
+						//now use these variables to check if there are at least 3 cells with a class on the board
+						//BUT actually the conditional could be made into an even stronger statement by asking: what is the min # of"pieces" that must be on the board for there to be a TicTacToe winner? Answer is 5: b/c for there to be 3 of the same pieces x or o, 5 turns must have been had at this point (3 turns by player x, 2 turns by player o) 	So:
+						if(xclasscount + oclasscount < 5){
+							return false;
+							//evaluation: if sum of the # of .x and .o classes now present on the board is less than 5, then return false (ie, stop here go no further along this track of ensuing evalutions)
+						}
+
+
+
+						//"else" (yes, # .x + .o is greater than 5): 
+						//so contintue "winner?" evalutations Testing for"
+							//is there 3 of the same class in a given ROW? : grab (with jQuery "$"") each and ALL rows
+							$("tr").each(function(){
+								//take tr and count its children (the tds) and which of those have .x or .o class
+								//all of this children of *this* current row have class .x
+								if($(this).children(".x").length == 3){
+									alertWinner("x");
+									return false;
+								}
+								if($(this).children(".o").length == 3){
+								alertWinner("o");
+									return false;
+								}	
+							})
+
+							//Now we check COLUMNS, but b/c tables arranged by Row "tr" we've gone back down the script to our HTML section and tagged each of the (9) td s with cell ids e.g.  <td id="c1"></td> for Cell 1, and so forth thru to cell 9. 
+								//We know what the "winning" organizations are (there are 8 possibilities, and we've already evaluated above to see if there are any of the 3 happening yet ie 3 of the same class in a given Row) 
+									//So here we begin looking at FIVE remainder winner possibilities:
+										//THREE: are there 3 tds of the same class .x or .o in a given column: c1, c4, c7 OR c2, c5, c8 OR c3, c6, c9
+										//TWO: are there 3 tds of the same class .x or .o in a given diagonal: c1, c5, c9  OR c3, c5, c7
+							//Column 1
+							if($("#c1").hasClass("x") && $("#c4").hasClass("x") && $("#c7").hasClass("x")){
+								alertWinner("x");
+								return false;
+							}
+							if($("#c1").hasClass("o") && $("#c4").hasClass("o") && $("#c7").hasClass("o")){
+								alertWinner("o");
+								return false;
+							}
+							//Column 2
+							if($("#c2").hasClass("x") && $("#c5").hasClass("x") && $("#c8").hasClass("x")){
+								alertWinner("x");
+								return false;
+							}
+							if($("#c2").hasClass("o") && $("#c5").hasClass("o") && $("#c8").hasClass("o")){
+								alertWinner("o");
+								return false;
+							}
+							//Column 3	
+ 							if($("#c3").hasClass("x") && $("#c6").hasClass("x") && $("#c9").hasClass("x")){
+								alertWinner("x");
+								return false;
+							}
+							if($("#c3").hasClass("o") && $("#c6").hasClass("o") && $("#c9").hasClass("o")){
+								alertWinner("o");
+								return false;
+							}
+							//Diagonal 1
+							if($("#c1").hasClass("x") && $("#c5").hasClass("x") && $("#c9").hasClass("x")){
+								alertWinner("x");
+								return false;
+							}
+							if($("#c1").hasClass("o") && $("#c5").hasClass("o") && $("#c9").hasClass("o")){
+								alertWinner("o");
+								return false;
+							}
+							//Diagonal 2
+							if($("#c3").hasClass("x") && $("#c5").hasClass("x") && $("#c7").hasClass("x")){
+								alertWinner("x");
+								return false;
+							}
+							if($("#c3").hasClass("o") && $("#c5").hasClass("o") && $("#c7").hasClass("o")){
+								alertWinner("o");
+								return false;
+							}
+
+
+
+
+						//alert("is there a winner?")
+
+
+
+			}
+
+			var alertWinner = function(champion){
+				if(champion == "x"){
+				alert("x is the winner!");
+				}
+
+				if(champion == "o"){
+				alert("o is the winner!");
+				}
+
+				turn = "gameOver"
+			}
+
+			//$(".refresh").click(function(){
+				//$(".playersclub").css("background-color", "green")
+			//})=
+			$("td").click(function(){
+				//the cell is clickable when game is not over
+				//the cell is clickable when has not yet been clicked 
+				if($(this).hasClass("x") || $(this).hasClass("o")){
+					return false;
+				}
+				//following line redundant of above logic, simply phrased differently for reference. 
+				if(!$(this).hasClass("x") && !$(this).hasClass("o")){
+
+					
+					if(turn == "gameOver"){
+						return false;
+					}
+
+
+					//if turn is x, clicked td takes .x class 
+					//else clicked td takes .o class
+					if(turn == "x"){
+						$(this).addClass("x");
+						//next turn is o and #floating_o takes class .myturn and #floating_x loses class .myturn
+						 turn = "o";
+						 $("#floating_o").addClass("myturn");
+						 $("#floating_x").removeClass("myturn");
+
+
+					}else{
+						$(this).addClass("o");
+						//next turn is x and #floating_x takes class .myturn and #floating_o loses class .myturn
+						turn = "x";
+						$("#floating_x").addClass("myturn");
+						$("#floating_o").removeClass("myturn");
+					}
+					//whoever's turn it was is at this point over. Now let's evaluate the board: (using "winner function")
+					winner();	
+
+				}
+
+
+				
+
+			});
+
+			$(".refresh").click(function(){
+
+				$("td").removeClass("x").removeClass("o");
+				turn = "x";
+				$("#floating_x").addClass("myturn");
+				$("#floating_o").removeClass("myturn");
+			});
+			
+			$("img.info").click(function(e){
+	    		$("div.info").lightbox_me({
+	        		centered: true,
+	        	});
+	    		e.preventDefault();
+			});
+
+		});
+
+	</script>
+	<title>Tic Tac Toe</title>
+	<!--<link rel="stylesheet" href="table.css" type="text/css" />-->
+</head>
+<body>
+
+
+<!--
+<div style="width:600px; height:600px; border:1px solid green;">
+
+		<img src="X.png" >
+		<img src="X.png" >
+		<img src="X.png" >
+		<img src="X.png" >
+		<img src="X.png" >
+		<img src="X.png" >
+		<img src="X.png" >
+</div>-->
+
+	
+<div class="playersclub">
+	<img src="X.png" class="floatingimage myturn" id="floating_x">
+	<img src="O.png" class="floatingimage" id="floating_o">
+	<table>
+		<tr>
+		    <td id="c1"></td>
+		    <td id="c2"></td>
+		    <td id="c3"></td>
+		</tr>
+		<tr>
+		    <td id="c4"></td>
+		    <td id="c5"></td>
+		    <td id="c6"></td>
+		</tr>
+		<tr>
+		    <td id="c7"></td>
+		    <td id="c8"></td>
+		    <td id="c9"></td>
+		</tr>
+	</table>
+</div>
+<img src="info.png" class="info">
+<img src="refresh.png" class="refresh">
+<div class = "info">
+	<h3>How to play:</h3>
+	<span>X always goes first. Players alternate placing Xs and Os on the board until either (a) one player has three in a row, horizontally, vertically or diagonally; or (b) all nine squares are filled. If a player is able to draw three Xs or three Os in a row, that player wins. If all nine squares are filled and neither player has three in a row, the game is a draw.
+		<p><strong><center>Play Ball</center></strong></span>
+</div>
+</body>    
+</html>
