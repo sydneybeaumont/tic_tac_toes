@@ -1,0 +1,5 @@
+table{width:900px;}
+table td
+    { border:1px solid black;
+        width: 33.3%;;
+            }
